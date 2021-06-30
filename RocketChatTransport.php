@@ -88,11 +88,8 @@ final class RocketChatTransport extends AbstractTransport
         if (!$result['success']) {
             throw new TransportException(sprintf('Unable to post the RocketChat message: %s.', $result['error']), $response);
         }
-
-        $success = $response->toArray(false);
-
+        
         $sentMessage = new SentMessage($message, (string) $this);
-        $sentMessage->setMessageId($success['message']['_id']);
 
         return $sentMessage;
     }

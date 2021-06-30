@@ -20,38 +20,57 @@ use Symfony\Component\Notifier\Message\MessageOptionsInterface;
  */
 final class RocketChatOptions implements MessageOptionsInterface
 {
-    /** @var string|null prefix with '@' for personal messages */
-    private $channel;
+    private array $options;
+    private ?string $channel;
 
-    /** @var mixed[] */
-    private $attachments;
-
-    /**
-     * @param string[] $attachments
-     */
-    public function __construct(array $attachments = [])
+    public function __construct(array $options = [], ?string $channel = null)
     {
-        $this->attachments = $attachments;
+        $this->options = $options;
+        $this->channel = $channel;
+
+        return $this;
     }
 
     public function toArray(): array
     {
-        return [
-            'attachments' => [$this->attachments],
-        ];
+        return $this->options;
     }
 
     public function getRecipientId(): ?string
     {
         return $this->channel;
     }
-
+    
     /**
-     * @return $this
+     * @var string $channel prefix with '@' for personal messages
      */
-    public function channel(string $channel): self
+    public function setChannel(string $channel): self
     {
         $this->channel = $channel;
+
+        return $this;
+    }
+
+    public function setSenderTitle(string $title): self
+    {
+        $this->options['username'] = $title;
+
+        return $this;
+    }
+
+    public function setIconURL(string $iconURL): self
+    {
+        $this->options['icon_url'] = $iconURL;
+
+        return $this;
+    }
+
+    public function addTextAttachment(string $name, string $content): self
+    {
+        $this->options['attachments'][] = [
+            'title' => $name,
+            'text' => $content,
+        ];
 
         return $this;
     }
